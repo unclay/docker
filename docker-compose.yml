@@ -37,6 +37,23 @@ services:
       - ./mysql/data:/var/lib/mysql
     networks:
       - gitea_network
+      
+  runner:
+    image: gitea/act_runner:latest
+    container_name: gitea-runner
+    restart: always
+    depends_on:
+      - gitea
+    environment:
+      # - DOCKER_HOST=tcp://192.168.21.14:2375
+      - GITEA_INSTANCE_URL=http://gitea:3000   # 使用 Docker 服务名访问 Gitea
+      - GITEA_RUNNER_REGISTRATION_TOKEN=U6FZW7cndNoymK5C3vnUrpADdw0WQLM0pknrVuxr
+      - GITEA_RUNNER_LABELS=ubuntu-latest:docker://node:16-bullseye,ubuntu-22.04:docker://node:16-bullseye
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock  # 允许 Runner 调用宿主机 Docker
+      - ./runner/data:/data                        # 持久化 Runner 配置（可选）
+    networks:
+      - gitea_network
 
 networks:
   gitea_network:
