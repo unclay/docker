@@ -1,0 +1,19 @@
+name: Auto-Deploy on Push
+
+on: 
+  push:
+    branches: [main]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Restart Gitea
+        run: |
+          cd /Users/wcl/unclay/docker  # Runner所在服务器的项目目录
+          git pull origin main
+          docker-compose down
+          docker-compose up -d --build
